@@ -33,7 +33,7 @@ do_framework_SGPlatform () {
   fi
   if [ ! -d "Vendors/SGPlatform/SGPlatform.xcodeproj" ]; then
     echo "clone SGPlatform from GitHub..."
-    git clone https://github.com/libobjc/SGPlatform.git Vendors/SGPlatform
+    git clone https://github.com/yyxaf/SGPlatform.git Vendors/SGPlatform
     echo "SGPlatform done."
   else
     echo "SGPlatform done."
