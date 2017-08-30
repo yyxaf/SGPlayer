@@ -35,6 +35,8 @@ typedef NS_ENUM(NSUInteger, SGMediaFormat) {
 + (instancetype)decoderByFFmpeg;
 
 @property (nonatomic, assign) BOOL hardwareAccelerateEnableForFFmpeg;  // default is YES
+@property (nonatomic, assign) BOOL optimizedDelayForFFmpeg;            // default is NO
+@property (nonatomic, assign) float optimizedmaxFrameQueueDuration;    // default is 0.2f;
 
 @property (nonatomic, assign) SGDecoderType decodeTypeForUnknown;      // default is SGDecodeTypeFFmpeg
 @property (nonatomic, assign) SGDecoderType decodeTypeForMP3;          // default is SGDecodeTypeAVPlayer

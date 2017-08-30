@@ -147,6 +147,7 @@
     [self setFFmpegFormatContextOptionStringValue:@"SGPlayer" forKey:@"user-agent"];
     [self setFFmpegFormatContextOptionIntValue:20 * 1000 * 1000 forKey:@"timeout"];
     [self setFFmpegFormatContextOptionIntValue:1 forKey:@"reconnect"];
+    [self setFFmpegFormatContextOptionStringValue:@"tcp" forKey:@"rtsp_transport"];
 }
 
 - (NSDictionary *)FFmpegFormatContextOptions

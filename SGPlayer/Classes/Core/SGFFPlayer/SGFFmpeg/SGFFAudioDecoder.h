@@ -29,6 +29,8 @@
 @property (nonatomic, assign, readonly) BOOL empty;
 @property (nonatomic, assign, readonly) NSTimeInterval duration;
 
+- (void)maxFrameQueueDuration:(float)maxFrameQueueDuration;
+
 - (SGFFAudioFrame *)getFrameSync;
 - (int)putPacket:(AVPacket)packet;
 

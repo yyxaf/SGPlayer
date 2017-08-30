@@ -28,6 +28,8 @@
     SwrContext * _audio_swr_context;
     void * _audio_swr_buffer;
     int _audio_swr_buffer_size;
+    
+    float _maxFrameQueueDuration;
 }
 
 @property (nonatomic, strong) SGFFFrameQueue * frameQueue;
@@ -49,6 +51,7 @@
         self->_codec_context = codec_context;
         self->_temp_frame = av_frame_alloc();
         self->_timebase = timebase;
+        self->_maxFrameQueueDuration = FLT_MAX;
         [self setup];
     }
     return self;
@@ -91,6 +94,10 @@
     return self.frameQueue.duration;
 }
 
+- (void)maxFrameQueueDuration:(float)maxFrameQueueDuration {
+    self->_maxFrameQueueDuration = maxFrameQueueDuration;
+}
+
 - (void)flush
 {
     [self.frameQueue flush];
@@ -105,6 +112,7 @@
     [self.frameQueue destroy];
     [self.framePool flush];
 }
+
 
 - (SGFFAudioFrame *)getFrameSync
 {
@@ -132,6 +140,9 @@
         {
             SGFFAudioFrame * frame = [self decode:packet.size];
             if (frame) {
+                while (self.frameQueue.duration > self->_maxFrameQueueDuration) {
+                    [self.frameQueue getFrameSync];
+                }
                 [self.frameQueue putFrame:frame];
             }
         }

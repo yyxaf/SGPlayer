@@ -259,6 +259,8 @@
     self.decoder.formatContextOptions = [self.abstractPlayer.decoder FFmpegFormatContextOptions];
     self.decoder.codecContextOptions = [self.abstractPlayer.decoder FFmpegCodecContextOptions];
     self.decoder.hardwareAccelerateEnable = self.abstractPlayer.decoder.hardwareAccelerateEnableForFFmpeg;
+    self.decoder.optimizedDelayForFFmpeg = self.abstractPlayer.decoder.optimizedDelayForFFmpeg;
+    self.decoder.optimizedmaxFrameQueueDuration = self.abstractPlayer.decoder.optimizedmaxFrameQueueDuration;
     [self.decoder open];
     [self reloadVolume];
     [self reloadPlayableBufferInterval];

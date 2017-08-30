@@ -86,6 +86,8 @@
 
 @property (nonatomic, assign) NSTimeInterval minBufferedDruation;
 @property (nonatomic, assign) BOOL hardwareAccelerateEnable;       // default is YES;
+@property (nonatomic, assign) BOOL optimizedDelayForFFmpeg;        // default is NO;
+@property (nonatomic, assign) float optimizedmaxFrameQueueDuration;       // default is 0.2f;
 
 @property (nonatomic, assign, readonly) BOOL buffering;
 

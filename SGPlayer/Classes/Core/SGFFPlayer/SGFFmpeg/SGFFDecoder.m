@@ -94,6 +94,7 @@
         self.audioOutputConfig = audioOutputConfig;
         
         self.hardwareAccelerateEnable = YES;
+        self.optimizedmaxFrameQueueDuration = 0.2f;
     }
     return self;
 }
@@ -190,6 +191,10 @@
         self.audioDecoder = [SGFFAudioDecoder decoderWithCodecContext:self.formatContext->_audio_codec_context
                                                              timebase:self.formatContext.audioTimebase
                                                              delegate:self];
+        
+        if (self.optimizedDelayForFFmpeg) {
+            [self.audioDecoder maxFrameQueueDuration:self.optimizedmaxFrameQueueDuration];
+        }
     }
     
     [self setupReadPacketOperation];
@@ -407,7 +412,7 @@ static NSTimeInterval max_packet_sleep_full_and_pause_time_interval = 0.5;
             NSTimeInterval currentStop = currentPostion + currentDuration;
             
             if (currentStop <= audioPositionReal) {
-                videoFrame = [self.videoDecoder getFrameAsyncPosistion:currentPostion];
+                videoFrame = [self.videoDecoder getFrameAsyncPosistion:self.audioFramePosition];
             }
         }
     }
@@ -594,7 +599,7 @@ static NSTimeInterval max_packet_sleep_full_and_pause_time_interval = 0.5;
             self.buffering = NO;
         }
     } else {
-        if (self.bufferedDuration <= 0.2 && !self.endOfFile) {
+        if (self.bufferedDuration <= 0.1 && !self.endOfFile) {
             self.buffering = YES;
         }
     }

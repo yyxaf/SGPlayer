@@ -48,7 +48,7 @@
         self.backgroundMode = SGPlayerBackgroundModeAutoPlayAndPause;
         self.displayMode = SGDisplayModeNormal;
         self.viewGravityMode = SGGravityModeResizeAspect;
-        self.playableBufferInterval = 2.f;
+        self.playableBufferInterval = 0.f;
         self.viewAnimationHidden = YES;
         self.volume = 1;
     }
