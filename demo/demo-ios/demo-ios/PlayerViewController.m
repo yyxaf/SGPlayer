@@ -40,55 +40,20 @@
     }];
     [self.view insertSubview:self.player.view atIndex:0];
     
-    static NSURL * normalVideo = nil;
-    static NSURL * vrVideo = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        normalVideo = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"i-see-fire" ofType:@"mp4"]];
-        vrVideo = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"google-help-vr" ofType:@"mp4"]];
-    });
-    switch (self.demoType)
-    {
-        case DemoType_AVPlayer_Normal:
-            [self.player replaceVideoWithURL:normalVideo];
-            break;
-        case DemoType_AVPlayer_VR:
-            [self.player replaceVideoWithURL:vrVideo videoType:SGVideoTypeVR];
-            break;
-        case DemoType_AVPlayer_VR_Box:
-            self.player.displayMode = SGDisplayModeBox;
-            [self.player replaceVideoWithURL:vrVideo videoType:SGVideoTypeVR];
-            break;
-        case DemoType_FFmpeg_Normal:
-            self.player.decoder = [SGPlayerDecoder decoderByFFmpeg];
-            self.player.decoder.hardwareAccelerateEnableForFFmpeg = NO;
-            [self.player replaceVideoWithURL:normalVideo];
-            break;
-        case DemoType_FFmpeg_Normal_Hardware:
-            self.player.decoder = [SGPlayerDecoder decoderByFFmpeg];
-            [self.player replaceVideoWithURL:normalVideo];
-            break;
-        case DemoType_FFmpeg_VR:
-            self.player.decoder = [SGPlayerDecoder decoderByFFmpeg];
-            self.player.decoder.hardwareAccelerateEnableForFFmpeg = NO;
-            [self.player replaceVideoWithURL:vrVideo videoType:SGVideoTypeVR];
-            break;
-        case DemoType_FFmpeg_VR_Hardware:
-            self.player.decoder = [SGPlayerDecoder decoderByFFmpeg];
-            [self.player replaceVideoWithURL:vrVideo videoType:SGVideoTypeVR];
-            break;
-        case DemoType_FFmpeg_VR_Box:
-            self.player.displayMode = SGDisplayModeBox;
-            self.player.decoder = [SGPlayerDecoder decoderByFFmpeg];
-            self.player.decoder.hardwareAccelerateEnableForFFmpeg = NO;
-            [self.player replaceVideoWithURL:vrVideo videoType:SGVideoTypeVR];
-            break;
-        case DemoType_FFmpeg_VR_Box_Hardware:
-            self.player.displayMode = SGDisplayModeBox;
-            self.player.decoder = [SGPlayerDecoder decoderByFFmpeg];
-            [self.player replaceVideoWithURL:vrVideo videoType:SGVideoTypeVR];
-            break;
-    }
+
+    
+
+    
+    NSString * path = @"rtsp://192.168.1.194/preview";
+//    path = @"rtmp://live.hkstv.hk.lxdns.com/live/hks";
+//    path = @"ftp://ftp:PanoduxJoys@192.168.1.194/.thumb/video/VID_20170818_74.MP4";
+//    path = @"http://flv2.bn.netease.com/videolib3/1505/07/diNcD9285/HD/diNcD9285-mobile.mp4";
+    NSURL* vrVideo = [NSURL URLWithString:path];
+    self.player.decoder = [SGPlayerDecoder decoderByFFmpeg];
+    self.player.decoder.hardwareAccelerateEnableForFFmpeg = YES;
+    self.player.decoder.optimizedDelayForFFmpeg = YES;
+    self.player.decoder.optimizedmaxFrameQueueDuration = 0.2f;
+    [self.player replaceVideoWithURL:vrVideo videoType:SGVideoTypeNormal];
 }
 
 - (void)viewDidLayoutSubviews
