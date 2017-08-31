@@ -9,11 +9,12 @@
 #import <SGPlatform/SGPlatform.h>
 #import "SGDisplayView.h"
 
-@interface SGGLViewController : SGPLFGLViewController
+@interface SGGLViewController : NSObject
 
 + (instancetype)viewControllerWithDisplayView:(SGDisplayView *)displayView;
 
 @property (nonatomic, weak, readonly) SGDisplayView * displayView;
+- (void)setupOpenGL;
 
 - (void)reloadViewport;
 - (void)flushClearColor;

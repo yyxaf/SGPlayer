@@ -100,6 +100,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 SGPLFGLView * glView = SGPLFGLViewControllerGetGLView(self.glViewController);
                 SGPLFViewInsertSubview(self, glView, 0);
+                [self.glViewController setupOpenGL];
             });
         }
             break;
@@ -189,6 +190,7 @@
     if (self.glViewController) {
         SGPLFGLView * glView = SGPLFGLViewControllerGetGLView(self.glViewController);
         [glView removeFromSuperview];
+        [self.glViewController flushClearColor];
         self.glViewController = nil;
     }
     self.avplayerLayerToken = NO;

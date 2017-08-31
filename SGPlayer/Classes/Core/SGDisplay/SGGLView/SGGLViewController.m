@@ -18,7 +18,7 @@
 #import "SGMatrix.h"
 #import "SGDistortionRenderer.h"
 
-@interface SGGLViewController ()
+@interface SGGLViewController ()<GLKViewDelegate>
 
 @property (nonatomic, strong) SGGLFrame * currentFrame;
 
@@ -39,6 +39,10 @@
 @property (nonatomic, assign) CGFloat aspect;
 @property (nonatomic, assign) CGRect viewport;
 
+@property (nonatomic, retain) GLKView *view;
+@property (nonatomic, weak) CADisplayLink * displayLink;
+@property (nonatomic, assign) NSInteger manualInvocationNeedDrawOpenGL;
+
 #if SGPLATFORM_TARGET_OS_IPHONE
 @property (nonatomic, strong) SGDistortionRenderer * distorionRenderer;
 #endif
@@ -56,31 +60,38 @@
 {
     if (self = [super init]) {
         self->_displayView = displayView;
+        self.view = [[GLKView alloc] init];
+        self.view.delegate = self;
     }
     return self;
 }
 
-- (void)viewDidLoad
+- (void)onDisplayLink:(CADisplayLink *)displayLink
 {
-    [super viewDidLoad];
-    [self setupOpenGL];
+    if (self.manualInvocationNeedDrawOpenGL == 0) {
+        self.manualInvocationNeedDrawOpenGL = 1;
+        [self.view setNeedsDisplay];
+        NSLog(@"onDisplayLink setNeedsDisplay");
+    }
+    else {
+        if (self.manualInvocationNeedDrawOpenGL % 10 == 0) {
+            [self.view setNeedsDisplay];
+            NSLog(@"onDisplayLink setNeedsDisplay");
+        }
+        else {
+            BOOL needDrawOpenGL = [self needDrawOpenGL];
+            NSLog(@"onDisplayLink need:%d",needDrawOpenGL);
+        }
+        
+        self.manualInvocationNeedDrawOpenGL++;
+    }
 }
-
-#if SGPLATFORM_TARGET_OS_IPHONE
-- (void)viewDidLayoutSubviews
-{
-    [super viewDidLayoutSubviews];
-    CGFloat scale = SGPLFScreenGetScale();
-    SGPLFGLView * glView = SGPLFGLViewControllerGetGLView(self);
-    self.distorionRenderer.viewportSize = CGSizeMake(CGRectGetWidth(glView.bounds) * scale, CGRectGetHeight(glView.bounds) * scale);
-}
-#endif
 
 - (void)setupOpenGL
 {
     self.openGLLock = [[NSLock alloc] init];
     SGPLFGLView * glView = SGPLFGLViewControllerGetGLView(self);
-    SGPLFViewSetBackgroundColor(glView, [SGPLFColor blackColor]);
+    SGPLFViewSetBackgroundColor(glView, [SGPLFColor redColor]);
     
     SGPLFGLContext * context = SGPLFGLContextAllocInit();
     SGPLFGLViewSetContext(glView, context);
@@ -89,8 +100,6 @@
 #if SGPLATFORM_TARGET_OS_IPHONE_OR_TV
     glView.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     glView.contentScaleFactor = [UIScreen mainScreen].scale;
-    self.pauseOnWillResignActive = NO;
-    self.resumeOnDidBecomeActive = YES;
 #endif
 #if SGPLATFORM_TARGET_OS_IPHONE
     self.distorionRenderer = [SGDistortionRenderer distortionRenderer];
@@ -109,19 +118,26 @@
     self.currentFrame = [SGGLFrame frame];
     self.aspect = 16.0 / 9.0;
     
+    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
+    
+    [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+    
     SGVideoType videoType = self.displayView.abstractPlayer.videoType;
     switch (videoType) {
         case SGVideoTypeNormal:
-            self.preferredFramesPerSecond = 35;
+            self.displayLink.preferredFramesPerSecond = 35.f;
             break;
         case SGVideoTypeVR:
-            self.preferredFramesPerSecond = 60;
+            self.displayLink.preferredFramesPerSecond = 60.f;
             break;
     }
 }
 
 - (void)flushClearColor
 {
+    [self.displayLink invalidate];
+    [self.displayLink removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+    
     NSLog(@"flush .....");
     [self.openGLLock lock];
     self.clearToken = YES;
@@ -132,7 +148,7 @@
     [self.openGLLock unlock];
 }
 
-- (void)glkView:(SGPLFGLView *)view drawInRect:(CGRect)rect
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
     [self.openGLLock lock];
     SGPLFGLViewPrepareOpenGL(view);
@@ -157,6 +173,7 @@
         SGPLFGLViewFlushBuffer(view);
     }
     [self.openGLLock unlock];
+    self.manualInvocationNeedDrawOpenGL = 0;
 }
 
 - (SGGLProgram *)chooseProgram
@@ -228,11 +245,11 @@
     SGVideoType videoType = self.displayView.abstractPlayer.videoType;
     SGDisplayMode displayMode = self.displayView.abstractPlayer.displayMode;
     
-#if SGPLATFORM_TARGET_OS_IPHONE
-    if (videoType == SGVideoTypeVR && displayMode == SGDisplayModeBox) {
-        [self.distorionRenderer beforDrawFrame];
-    }
-#endif
+    //#if SGPLATFORM_TARGET_OS_IPHONE
+    //    if (videoType == SGVideoTypeVR && displayMode == SGDisplayModeBox) {
+    //        [self.distorionRenderer beforDrawFrame];
+    //    }
+    //#endif
     
     SGGLProgram * program = [self chooseProgram];
     [program use];
@@ -285,13 +302,13 @@
             break;
     }
     
-#if SGPLATFORM_TARGET_OS_IPHONE
-    if (videoType == SGVideoTypeVR && displayMode == SGDisplayModeBox) {
-        SGPLFGLView * glView = SGPLFGLViewControllerGetGLView(self);
-        SGPLFGLViewBindFrameBuffer(glView);
-        [self.distorionRenderer afterDrawFrame];
-    }
-#endif
+    //#if SGPLATFORM_TARGET_OS_IPHONE
+    //    if (videoType == SGVideoTypeVR && displayMode == SGDisplayModeBox) {
+    //        SGPLFGLView * glView = SGPLFGLViewControllerGetGLView(self);
+    //        SGPLFGLViewBindFrameBuffer(glView);
+    //        [self.distorionRenderer afterDrawFrame];
+    //    }
+    //#endif
 }
 
 - (void)reloadViewport
