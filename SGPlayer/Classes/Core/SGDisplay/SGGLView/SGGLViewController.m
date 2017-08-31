@@ -39,8 +39,8 @@
 @property (nonatomic, assign) CGFloat aspect;
 @property (nonatomic, assign) CGRect viewport;
 
-@property (nonatomic, retain) GLKView *view;
-@property (nonatomic, weak) CADisplayLink * displayLink;
+
+@property (nonatomic, retain) CADisplayLink * displayLink;
 @property (nonatomic, assign) NSInteger manualInvocationNeedDrawOpenGL;
 
 #if SGPLATFORM_TARGET_OS_IPHONE
@@ -136,7 +136,7 @@
 - (void)flushClearColor
 {
     [self.displayLink invalidate];
-    [self.displayLink removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+    self.displayLink = nil;
     
     NSLog(@"flush .....");
     [self.openGLLock lock];

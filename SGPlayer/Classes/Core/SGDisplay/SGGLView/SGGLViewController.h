@@ -14,6 +14,7 @@
 + (instancetype)viewControllerWithDisplayView:(SGDisplayView *)displayView;
 
 @property (nonatomic, weak, readonly) SGDisplayView * displayView;
+@property (nonatomic, retain) GLKView *view;
 - (void)setupOpenGL;
 
 - (void)reloadViewport;
