@@ -90,6 +90,8 @@
         
         self.manualInvocationNeedDrawOpenGL++;
     }
+    
+    [self setFPS];
 }
 
 - (void)setupOpenGL
@@ -129,16 +131,6 @@
     self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
     
     [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-    
-    SGVideoType videoType = self.displayView.abstractPlayer.videoType;
-    switch (videoType) {
-        case SGVideoTypeNormal:
-            self.displayLink.preferredFramesPerSecond = 35.f;
-            break;
-        case SGVideoTypeVR:
-            self.displayLink.preferredFramesPerSecond = 60.f;
-            break;
-    }
 }
 
 - (void)flushClearColor
@@ -401,6 +393,29 @@
     }
     SGPLFGLView * glView = SGPLFGLViewControllerGetGLView(self);
     return SGPLFGLViewGetCurrentSnapshot(glView);
+}
+
+- (void)setFPS
+{
+    SGVideoType videoType = self.displayView.abstractPlayer.videoType;
+    switch (videoType) {
+        case SGVideoTypeNormal:
+        {
+            if (self.displayLink.preferredFramesPerSecond != 30.f) {
+                self.displayLink.preferredFramesPerSecond = 30.f;
+            }
+        }
+            
+            break;
+        case SGVideoTypeVR:
+        {
+            if (self.displayLink.preferredFramesPerSecond != 60.f) {
+                self.displayLink.preferredFramesPerSecond = 60.f;
+            }
+        }
+            
+            break;
+    }
 }
 
 - (void)dealloc
