@@ -12,6 +12,7 @@
 
 @property (nonatomic, assign) CVPixelBufferRef pixelBuffer;
 @property (nonatomic, strong) SGFFVideoFrame * videoFrame;
+@property (nonatomic, weak) UIImage* image;
 
 @end
 
@@ -49,6 +50,17 @@
     self->_hasUpate = YES;
 }
 
+- (void)updateWithImage:(UIImage*)image
+{
+    [self flush];
+    
+    self->_type = SGGLFrameTypeRGBA;
+    self.image = image;
+    
+    self->_hasData = YES;
+    self->_hasUpate = YES;
+}
+
 - (CVPixelBufferRef)pixelBufferForNV12
 {
     if (self.pixelBuffer) {
@@ -61,6 +73,11 @@
 - (SGFFAVYUVVideoFrame *)pixelBufferForYUV420
 {
     return (SGFFAVYUVVideoFrame *)self.videoFrame;
+}
+
+- (UIImage *)getImage
+{
+    return self.image;
 }
 
 - (NSTimeInterval)currentPosition

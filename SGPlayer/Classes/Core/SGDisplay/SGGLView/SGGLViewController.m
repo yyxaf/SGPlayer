@@ -11,8 +11,10 @@
 #import "SGGLFrame.h"
 #import "SGGLProgramNV12.h"
 #import "SGGLProgramYUV420.h"
+#import "SGGLProgramRGBA.h"
 #import "SGGLTextureNV12.h"
 #import "SGGLTextureYUV420.h"
+#import "SGGLTextureRGBA.h"
 #import "SGGLNormalModel.h"
 #import "SGGLVRModel.h"
 #import "SGMatrix.h"
@@ -24,9 +26,12 @@
 
 @property (nonatomic, strong) SGGLTextureNV12 * textureNV12;
 @property (nonatomic, strong) SGGLTextureYUV420 * textureYUV420;
+@property (nonatomic, strong) SGGLTextureRGBA * textureRGBA;
+
 
 @property (nonatomic, strong) SGGLProgramNV12 * programNV12;
 @property (nonatomic, strong) SGGLProgramYUV420 * programYUV420;
+@property (nonatomic, strong) SGGLProgramRGBA * programYUVRGBA;
 
 @property (nonatomic, strong) SGGLNormalModel * normalModel;
 @property (nonatomic, strong) SGGLVRModel * vrModel;
@@ -107,9 +112,12 @@
     
     self.textureNV12 = [[SGGLTextureNV12 alloc] initWithContext:context];
     self.textureYUV420 = [[SGGLTextureYUV420 alloc] init];
+    self.textureRGBA = [[SGGLTextureRGBA alloc] init];
     
     self.programNV12 = [SGGLProgramNV12 program];
     self.programYUV420 = [SGGLProgramYUV420 program];
+    self.programYUVRGBA = [SGGLProgramRGBA program];
+
     
     self.normalModel = [SGGLNormalModel model];
     self.vrModel = [SGGLVRModel model];
@@ -183,6 +191,8 @@
             return self.programNV12;
         case SGGLFrameTypeYUV420:
             return self.programYUV420;
+        case SGGLFrameTypeRGBA:
+            return self.programYUVRGBA;
     }
 }
 
@@ -193,6 +203,8 @@
             return self.textureNV12;
         case SGGLFrameTypeYUV420:
             return self.textureYUV420;
+        case SGGLFrameTypeRGBA:
+            return self.textureRGBA;
     }
 }
 

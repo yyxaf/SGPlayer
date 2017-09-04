@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		034A63891F5D091A00493D4C /* SGGLProgramRGBA.h in Headers */ = {isa = PBXBuildFile; fileRef = 034A63871F5D091A00493D4C /* SGGLProgramRGBA.h */; };
+		034A638A1F5D091A00493D4C /* SGGLProgramRGBA.m in Sources */ = {isa = PBXBuildFile; fileRef = 034A63881F5D091A00493D4C /* SGGLProgramRGBA.m */; };
+		03D8643A1F593DA900054FBB /* SGGLTextureRGBA.h in Headers */ = {isa = PBXBuildFile; fileRef = 03D864381F593DA900054FBB /* SGGLTextureRGBA.h */; };
+		03D8643B1F593DA900054FBB /* SGGLTextureRGBA.m in Sources */ = {isa = PBXBuildFile; fileRef = 03D864391F593DA900054FBB /* SGGLTextureRGBA.m */; };
+		03DC1A0E1F580BDD00EA30D9 /* SGImagePlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 03DC1A0C1F580BDD00EA30D9 /* SGImagePlayer.h */; };
+		03DC1A0F1F580BDD00EA30D9 /* SGImagePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 03DC1A0D1F580BDD00EA30D9 /* SGImagePlayer.m */; };
 		9C41E5E81E975631006E5A65 /* avcodec.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C41E57C1E975631006E5A65 /* avcodec.h */; };
 		9C41E5E91E975631006E5A65 /* avcodec.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C41E57C1E975631006E5A65 /* avcodec.h */; };
 		9C41E5EA1E975631006E5A65 /* avcodec.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C41E57C1E975631006E5A65 /* avcodec.h */; };
@@ -641,6 +647,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		034A63871F5D091A00493D4C /* SGGLProgramRGBA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SGGLProgramRGBA.h; sourceTree = "<group>"; };
+		034A63881F5D091A00493D4C /* SGGLProgramRGBA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SGGLProgramRGBA.m; sourceTree = "<group>"; };
+		03D864381F593DA900054FBB /* SGGLTextureRGBA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SGGLTextureRGBA.h; sourceTree = "<group>"; };
+		03D864391F593DA900054FBB /* SGGLTextureRGBA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SGGLTextureRGBA.m; sourceTree = "<group>"; };
+		03DC1A0C1F580BDD00EA30D9 /* SGImagePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SGImagePlayer.h; sourceTree = "<group>"; };
+		03DC1A0D1F580BDD00EA30D9 /* SGImagePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SGImagePlayer.m; sourceTree = "<group>"; };
 		9C0912361E71283100E5AA46 /* SGPlatform.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SGPlatform.xcodeproj; path = Vendors/SGPlatform/SGPlatform.xcodeproj; sourceTree = "<group>"; };
 		9C41E57C1E975631006E5A65 /* avcodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avcodec.h; sourceTree = "<group>"; };
 		9C41E57D1E975631006E5A65 /* avdct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avdct.h; sourceTree = "<group>"; };
@@ -918,6 +930,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		03DC1A0B1F580AF300EA30D9 /* SGImagePlayer */ = {
+			isa = PBXGroup;
+			children = (
+				03DC1A0C1F580BDD00EA30D9 /* SGImagePlayer.h */,
+				03DC1A0D1F580BDD00EA30D9 /* SGImagePlayer.m */,
+			);
+			path = SGImagePlayer;
+			sourceTree = "<group>";
+		};
 		9C0912371E71283100E5AA46 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1105,6 +1126,7 @@
 		9C478F341E713A9B00AD4289 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				03DC1A0B1F580AF300EA30D9 /* SGImagePlayer */,
 				9C478F351E713AA800AD4289 /* SGPlayerMacro.h */,
 				9C478F361E713AA800AD4289 /* SGPlayerNotification.h */,
 				9C478F371E713AA800AD4289 /* SGPlayerNotification.m */,
@@ -1241,6 +1263,8 @@
 				9C5AB6F91E88F0400021F460 /* SGGLProgramNV12.m */,
 				9C5AB7001E88F0560021F460 /* SGGLProgramYUV420.h */,
 				9C5AB7011E88F0560021F460 /* SGGLProgramYUV420.m */,
+				034A63871F5D091A00493D4C /* SGGLProgramRGBA.h */,
+				034A63881F5D091A00493D4C /* SGGLProgramRGBA.m */,
 			);
 			path = SGGLProgram;
 			sourceTree = "<group>";
@@ -1254,6 +1278,8 @@
 				9C5AB6E11E88E8F20021F460 /* SGGLTextureNV12.m */,
 				9C5AB6E81E88E90B0021F460 /* SGGLTextureYUV420.h */,
 				9C5AB6E91E88E90B0021F460 /* SGGLTextureYUV420.m */,
+				03D864381F593DA900054FBB /* SGGLTextureRGBA.h */,
+				03D864391F593DA900054FBB /* SGGLTextureRGBA.m */,
 			);
 			path = SGGLTexture;
 			sourceTree = "<group>";
@@ -1364,6 +1390,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				034A63891F5D091A00493D4C /* SGGLProgramRGBA.h in Headers */,
 				9C41E5F41E975631006E5A65 /* dirac.h in Headers */,
 				9C41E70B1E975631006E5A65 /* version.h in Headers */,
 				9C41E6ED1E975631006E5A65 /* sha.h in Headers */,
@@ -1385,6 +1412,7 @@
 				9C5AB68E1E88B2AD0021F460 /* SGGLViewController.h in Headers */,
 				9C478F651E713AC600AD4289 /* SGSensors.h in Headers */,
 				9C4792891E713B1000AD4289 /* SGFFMetadata.h in Headers */,
+				03D8643A1F593DA900054FBB /* SGGLTextureRGBA.h in Headers */,
 				9C41E66C1E975631006E5A65 /* crc.h in Headers */,
 				9C41E66F1E975631006E5A65 /* des.h in Headers */,
 				9C4792831E713B1000AD4289 /* SGFFFrameQueue.h in Headers */,
@@ -1474,6 +1502,7 @@
 				9C41E6961E975631006E5A65 /* hwcontext_cuda.h in Headers */,
 				9C4792EF1E713B4900AD4289 /* SGGLNormalModel.h in Headers */,
 				9C478F401E713AA800AD4289 /* SGPlayerNotification.h in Headers */,
+				03DC1A0E1F580BDD00EA30D9 /* SGImagePlayer.h in Headers */,
 				9C41E7051E975631006E5A65 /* tree.h in Headers */,
 				9C41E6871E975631006E5A65 /* file.h in Headers */,
 				9C41E6781E975631006E5A65 /* downmix_info.h in Headers */,
@@ -1985,17 +2014,20 @@
 				9C4792741E713B1000AD4289 /* SGFFFormatContext.m in Sources */,
 				9C478F5A1E713ABB00AD4289 /* SGFingerRotation.m in Sources */,
 				9C478F431E713AA800AD4289 /* SGPlayerNotification.m in Sources */,
+				03DC1A0F1F580BDD00EA30D9 /* SGImagePlayer.m in Sources */,
 				9C47930A1E713B4900AD4289 /* SGGLProgram.m in Sources */,
 				9C4793281E713B4900AD4289 /* SGDistortionModel.m in Sources */,
 				9C4792981E713B1000AD4289 /* SGFFTools.m in Sources */,
 				9C4792801E713B1000AD4289 /* SGFFFramePool.m in Sources */,
 				9C47926E1E713B1000AD4289 /* SGFFDecoder.m in Sources */,
 				9C4792AA1E713B1000AD4289 /* SGFFVideoFrame.m in Sources */,
+				03D8643B1F593DA900054FBB /* SGGLTextureRGBA.m in Sources */,
 				9C478F4F1E713AA800AD4289 /* SGYUVTools.m in Sources */,
 				9C5AB6ED1E88E90B0021F460 /* SGGLTextureYUV420.m in Sources */,
 				9C5AB6FD1E88F0400021F460 /* SGGLProgramNV12.m in Sources */,
 				9C4792621E713B1000AD4289 /* SGFFAudioDecoder.m in Sources */,
 				9C4793371E713B5400AD4289 /* SGAudioManager.m in Sources */,
+				034A638A1F5D091A00493D4C /* SGGLProgramRGBA.m in Sources */,
 				9C4792E01E713B4900AD4289 /* SGAVPlayer.m in Sources */,
 				9C4792F21E713B4900AD4289 /* SGGLNormalModel.m in Sources */,
 				9C5AB6DD1E88E7980021F460 /* SGGLTexture.m in Sources */,

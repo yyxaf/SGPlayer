@@ -23,6 +23,7 @@
 @property (nonatomic, assign) SGDecoderType decoderType;
 @property (nonatomic, strong) SGAVPlayer * avPlayer;
 @property (nonatomic, strong) SGFFPlayer * ffPlayer;
+@property (nonatomic, strong) SGImagePlayer * imPlayer;
 
 @property (nonatomic, assign) BOOL needAutoPlay;
 @property (nonatomic, assign) NSTimeInterval lastForegroundTimeInterval;
@@ -44,6 +45,7 @@
 #endif
         self.decoder = [SGPlayerDecoder decoderByDefault];
         self.contentURL = nil;
+        self.contentImage = nil;
         self.videoType = SGVideoTypeNormal;
         self.backgroundMode = SGPlayerBackgroundModeAutoPlayAndPause;
         self.displayMode = SGDisplayModeNormal;
@@ -94,6 +96,14 @@
             }
             break;
     }
+}
+
+- (void)replaceImage:(nullable UIImage *)contentImage videoType:(SGVideoType)videoType
+{
+    self.contentImage = contentImage;
+    self.videoType = videoType;
+    
+    [self.imPlayer replaceImage];
 }
 
 - (void)play
@@ -180,6 +190,11 @@
             _videoType = SGVideoTypeNormal;
             break;
     }
+}
+
+- (void)setContentImage:(UIImage *)contentImage
+{
+    _contentImage = contentImage;
 }
 
 - (void)setVolume:(CGFloat)volume
@@ -323,6 +338,14 @@
         _ffPlayer = [SGFFPlayer playerWithAbstractPlayer:self];
     }
     return _ffPlayer;
+}
+
+- (SGImagePlayer *)imPlayer
+{
+    if (!_imPlayer) {
+        _imPlayer = [SGImagePlayer playerWithAbstractPlayer:self];
+    }
+    return _imPlayer;
 }
 
 - (void)setupPlayerView:(SGPLFView *)playerView;

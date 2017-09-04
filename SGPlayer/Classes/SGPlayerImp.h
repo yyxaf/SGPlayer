@@ -65,12 +65,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, readonly) NSURL * contentURL;
 @property (nonatomic, assign, readonly) SGVideoType videoType;
+@property (nonatomic, retain, readonly) UIImage *contentImage;
 
 @property (nonatomic, strong, readonly, nullable) SGError * error;
 
 - (void)replaceEmpty;
 - (void)replaceVideoWithURL:(nullable NSURL *)contentURL;
 - (void)replaceVideoWithURL:(nullable NSURL *)contentURL videoType:(SGVideoType)videoType;
+- (void)replaceImage:(nullable UIImage *)contentImage videoType:(SGVideoType)videoType;
 
 // preview
 @property (nonatomic, assign) SGDisplayMode displayMode;

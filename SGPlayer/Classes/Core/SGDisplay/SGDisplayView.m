@@ -55,6 +55,11 @@
     self->_playerOutputType = SGDisplayPlayerOutputTypeAV;
 }
 
+- (void)playerOutputTypeIM
+{
+    self->_playerOutputType = SGDisplayPlayerOutputTypeIM;
+}
+
 - (void)rendererTypeEmpty
 {
     if (self.rendererType != SGDisplayRendererTypeEmpty) {
@@ -162,6 +167,15 @@
             if (videoFrame) {
                 [glFrame updateWithSGFFVideoFrame:videoFrame];
                 glFrame.rotateType = videoFrame.rotateType;
+            }
+        }
+            break;
+        
+        case SGDisplayPlayerOutputTypeIM:
+        {
+            UIImage* image = [self.playerOutputIM imagePlayerOutputGetImage];
+            if (image) {
+                [glFrame updateWithImage:image];
             }
         }
             break;

@@ -10,6 +10,7 @@
 #import "SGPlayerImp.h"
 #import "SGAVPlayer.h"
 #import "SGFFPlayer.h"
+#import "SGImagePlayer.h"
 
 @class SGFingerRotation;
 @class SGGLFrame;
@@ -24,6 +25,7 @@ typedef NS_ENUM(NSUInteger, SGDisplayPlayerOutputType) {
     SGDisplayPlayerOutputTypeEmpty,
     SGDisplayPlayerOutputTypeFF,
     SGDisplayPlayerOutputTypeAV,
+    SGDisplayPlayerOutputTypeIM,
 };
 
 @interface SGDisplayView : SGPLFView
@@ -44,9 +46,11 @@ typedef NS_ENUM(NSUInteger, SGDisplayPlayerOutputType) {
 @property (nonatomic, assign, readonly) SGDisplayPlayerOutputType playerOutputType;
 @property (nonatomic, weak) id <SGFFPlayerOutput> playerOutputFF;
 @property (nonatomic, weak) id <SGAVPlayerOutput> playerOutputAV;
+@property (nonatomic, weak) id <SGImagePlayerOutput> playerOutputIM;
 - (void)playerOutputTypeEmpty;
 - (void)playerOutputTypeFF;
 - (void)playerOutputTypeAV;
+- (void)playerOutputTypeIM;
 
 
 // renderer type

@@ -13,6 +13,7 @@
 typedef NS_ENUM(NSUInteger, SGGLFrameType) {
     SGGLFrameTypeNV12,
     SGGLFrameTypeYUV420,
+    SGGLFrameTypeRGBA,
 };
 
 @interface SGGLFrame : NSObject
@@ -28,12 +29,14 @@ typedef NS_ENUM(NSUInteger, SGGLFrameType) {
 
 - (void)updateWithCVPixelBuffer:(CVPixelBufferRef)pixelBuffer;
 - (void)updateWithSGFFVideoFrame:(SGFFVideoFrame *)videoFrame;
+- (void)updateWithImage:(UIImage*)image;
 - (void)didDraw;
 - (void)didUpdateRotateType;
 - (void)flush;
 
 - (CVPixelBufferRef)pixelBufferForNV12;
 - (SGFFAVYUVVideoFrame *)pixelBufferForYUV420;
+- (UIImage *)getImage;
 
 - (NSTimeInterval)currentPosition;
 - (NSTimeInterval)currentDuration;
