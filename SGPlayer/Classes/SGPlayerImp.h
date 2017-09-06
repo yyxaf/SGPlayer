@@ -66,6 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSURL * contentURL;
 @property (nonatomic, assign, readonly) SGVideoType videoType;
 @property (nonatomic, retain, readonly) UIImage *contentImage;
+@property (nonatomic, assign) BOOL forceDiscardDraw;
 
 @property (nonatomic, strong, readonly, nullable) SGError * error;
 

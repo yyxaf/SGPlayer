@@ -48,6 +48,8 @@
 @property (nonatomic, retain) CADisplayLink * displayLink;
 @property (nonatomic, assign) NSInteger manualInvocationNeedDrawOpenGL;
 
+@property (nonatomic, assign) BOOL forceDiscardDraw;//强制放弃渲染
+
 #if SGPLATFORM_TARGET_OS_IPHONE
 @property (nonatomic, strong) SGDistortionRenderer * distorionRenderer;
 #endif
@@ -94,6 +96,8 @@
     }
     
     [self setFPS];
+    
+    self.forceDiscardDraw = self.displayView.abstractPlayer.forceDiscardDraw;
 }
 
 - (void)setupOpenGL
@@ -152,10 +156,6 @@
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    if (self.displayView.abstractPlayer.contentImage) {
-        NSLog(@"image glkView");
-    }
-    
     [self.openGLLock lock];
     SGPLFGLViewPrepareOpenGL(view);
     
@@ -229,6 +229,11 @@
 //    if (self.displayView.abstractPlayer.videoType != SGVideoTypeVR && !self.currentFrame.hasUpate && self.drawToekn) {
 //        return NO;
 //    }
+    
+    if (self.forceDiscardDraw) {
+        return NO;
+    }
+    
     
     SGGLTexture * texture = [self chooseTexture];
     CGFloat aspect = 16.0 / 9.0;

@@ -40,24 +40,17 @@ static GLuint gl_texture;
     GLsizei textureHeight = image.size.height;
     * aspect = (textureWidth * 1.0) / (textureHeight * 1.0);
     
-    static void *imageData = NULL;
+    
     if ([image isEqual:self.image]) {
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, gl_texture);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
-
         return YES;
     }
-    
-    if (imageData != NULL) {
-        free(imageData);
-    }
-    
+
     self.image = image;
     
+    void *imageData = NULL;
     imageData = malloc( textureWidth * textureHeight * 4 );
     
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE10);
     glBindTexture(GL_TEXTURE_2D, gl_texture);
 //    // Set filtering
 //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -83,7 +76,7 @@ static GLuint gl_texture;
     //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
     CGContextRelease(context);
-//    free(imageData);
+    free(imageData);
 
     return YES;
 }
