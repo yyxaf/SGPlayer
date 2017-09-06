@@ -32,33 +32,49 @@ static GLuint gl_texture;
 - (BOOL)updateTextureWithGLFrame:(SGGLFrame *)glFrame aspect:(CGFloat *)aspect
 {
     UIImage *image = [glFrame getImage];
-    GLsizei textureWidth = image.size.width;
-    GLsizei textureHeight = image.size.height;
-    
     if (!image) {
         return NO;
     }
     
+    GLsizei textureWidth = image.size.width;
+    GLsizei textureHeight = image.size.height;
+    * aspect = (textureWidth * 1.0) / (textureHeight * 1.0);
+    
+    static void *imageData = NULL;
     if ([image isEqual:self.image]) {
-        * aspect = (textureWidth * 1.0) / (textureHeight * 1.0);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, gl_texture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+
         return YES;
     }
     
-    self.image = image;
-    * aspect = (textureWidth * 1.0) / (textureHeight * 1.0);
+    if (imageData != NULL) {
+        free(imageData);
+    }
     
+    self.image = image;
+    
+    imageData = malloc( textureWidth * textureHeight * 4 );
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gl_texture);
+//    // Set filtering
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    
+//    // for not mipmap
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
-
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-     void *imageData = malloc( textureWidth * textureHeight * 4 );
+//    void *imageData = NULL;
+    imageData = malloc( textureWidth * textureHeight * 4 );
     CGContextRef context = CGBitmapContextCreate( imageData, textureWidth, textureHeight, 8, 4 * textureWidth, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
     CGColorSpaceRelease( colorSpace );
     CGContextClearRect( context, CGRectMake( 0, 0, textureWidth, textureHeight ) );
@@ -67,7 +83,7 @@ static GLuint gl_texture;
     //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
     CGContextRelease(context);
-    free(imageData);
+//    free(imageData);
 
     return YES;
 }

@@ -76,16 +76,18 @@
     if (self.manualInvocationNeedDrawOpenGL == 0) {
         self.manualInvocationNeedDrawOpenGL = 1;
         [self.view setNeedsDisplay];
-        NSLog(@"onDisplayLink setNeedsDisplay");
+//        NSLog(@"onDisplayLink setNeedsDisplay");
     }
     else {
         if (self.manualInvocationNeedDrawOpenGL % 10 == 0) {
             [self.view setNeedsDisplay];
-            NSLog(@"onDisplayLink setNeedsDisplay");
+//            NSLog(@"onDisplayLink setNeedsDisplay");
         }
         else {
             BOOL needDrawOpenGL = [self needDrawOpenGL];
-            NSLog(@"onDisplayLink need:%d",needDrawOpenGL);
+//            if (self.displayView.abstractPlayer.contentImage) {
+//                NSLog(@"onDisplayLink need:%d",needDrawOpenGL);
+//            }
         }
         
         self.manualInvocationNeedDrawOpenGL++;
@@ -130,7 +132,7 @@
     
     self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onDisplayLink:)];
     
-    [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+    [self.displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
 }
 
 - (void)flushClearColor
@@ -150,6 +152,10 @@
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
+    if (self.displayView.abstractPlayer.contentImage) {
+        NSLog(@"image glkView");
+    }
+    
     [self.openGLLock lock];
     SGPLFGLViewPrepareOpenGL(view);
     
