@@ -118,7 +118,7 @@
 - (void)setupOpenFileOperation
 {
     self.openFileOperation = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(openFormatContext) object:nil];
-    self.openFileOperation.queuePriority = NSOperationQueuePriorityVeryHigh;
+    self.openFileOperation.queuePriority = NSOperationQueuePriorityNormal;
     self.openFileOperation.qualityOfService = NSQualityOfServiceUserInteractive;
     
     [self.ffmpegOperationQueue addOperation:self.openFileOperation];
@@ -135,7 +135,7 @@
         self.readPacketOperation = [[NSInvocationOperation alloc] initWithTarget:self
                                                                         selector:@selector(readPacketThread)
                                                                           object:nil];
-        self.readPacketOperation.queuePriority = NSOperationQueuePriorityVeryHigh;
+        self.readPacketOperation.queuePriority = NSOperationQueuePriorityNormal;
         self.readPacketOperation.qualityOfService = NSQualityOfServiceUserInteractive;
         [self.readPacketOperation addDependency:self.openFileOperation];
         [self.ffmpegOperationQueue addOperation:self.readPacketOperation];
@@ -146,7 +146,7 @@
             self.decodeFrameOperation = [[NSInvocationOperation alloc] initWithTarget:self.videoDecoder
                                                                              selector:@selector(startDecodeThread)
                                                                                object:nil];
-            self.decodeFrameOperation.queuePriority = NSOperationQueuePriorityVeryHigh;
+            self.decodeFrameOperation.queuePriority = NSOperationQueuePriorityNormal;
             self.decodeFrameOperation.qualityOfService = NSQualityOfServiceUserInteractive;
             [self.decodeFrameOperation addDependency:self.openFileOperation];
             [self.ffmpegOperationQueue addOperation:self.decodeFrameOperation];
