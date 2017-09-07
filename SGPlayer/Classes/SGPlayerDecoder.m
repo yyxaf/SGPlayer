@@ -149,8 +149,8 @@
     [self setFFmpegFormatContextOptionIntValue:1 forKey:@"reconnect"];
     [self setFFmpegFormatContextOptionStringValue:@"tcp" forKey:@"rtsp_transport"];
     
-    [self setFFmpegFormatContextOptionIntValue:1024 * 100 forKey:@"probsize"];
-    [self setFFmpegFormatContextOptionIntValue:1000 * 100 forKey:@"analyzeduration"];
+    [self setFFmpegFormatContextOptionIntValue:1024 * 3 forKey:@"probesize"];
+    [self setFFmpegFormatContextOptionIntValue:1000 * 50 forKey:@"analyzeduration"];
 //    [self setFFmpegFormatContextOptionIntValue:3000 forKey:@"max_analyze_duration"];
     
 }
