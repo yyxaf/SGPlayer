@@ -148,6 +148,11 @@
     [self setFFmpegFormatContextOptionIntValue:20 * 1000 * 1000 forKey:@"timeout"];
     [self setFFmpegFormatContextOptionIntValue:1 forKey:@"reconnect"];
     [self setFFmpegFormatContextOptionStringValue:@"tcp" forKey:@"rtsp_transport"];
+    
+    [self setFFmpegFormatContextOptionIntValue:1024 * 100 forKey:@"probsize"];
+    [self setFFmpegFormatContextOptionIntValue:1000 * 100 forKey:@"analyzeduration"];
+//    [self setFFmpegFormatContextOptionIntValue:3000 forKey:@"max_analyze_duration"];
+    
 }
 
 - (NSDictionary *)FFmpegFormatContextOptions
