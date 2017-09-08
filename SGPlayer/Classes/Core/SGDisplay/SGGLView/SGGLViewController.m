@@ -241,11 +241,18 @@
         return NO;
     }
     
-    if (self.displayView.abstractPlayer.videoType == SGVideoTypeVR) {
-        self.aspect = 16.0 / 9.0;
-    } else {
+//    if (self.displayView.abstractPlayer.videoType == SGVideoTypeVR) {
+//        self.aspect = 16.0 / 9.0;
+//    } else {
+//        self.aspect = aspect;
+//    }
+    
+    if (self.aspect != aspect) {
         self.aspect = aspect;
+        return NO;
     }
+
+    
     if (self.currentFrame.hasUpdateRotateType) {
         [self reloadViewport];
     }
