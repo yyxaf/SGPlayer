@@ -33,7 +33,10 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
 @property (nonatomic, assign) BOOL vtSessionToken;
 @property (nonatomic, assign) BOOL needConvertNALSize3To4;
 @property (nonatomic, assign) BOOL needConvertByteStream;
+@property (nonatomic, assign) int videoWidth;
+@property (nonatomic, assign) int videoHeight;
 @end
+
 
 @implementation SGFFVideoToolBox
 
@@ -46,6 +49,8 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
 {
     if (self = [super init]) {
         self->_codec_context = codecContext;
+        self.videoWidth = 0;
+        self.videoHeight = 0;
     }
     return self;
 }
@@ -121,9 +126,16 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
                         return error;
                     }
                     
-                    //                for (int i = 0; i < extrasize; i++) {
-                    //                    NSLog(@"extradata[%d]:%d",i,extradata[i]);
-                    //                }
+                    if (self.videoWidth == 0)
+                    {
+                        self.videoWidth = _codec_context->width;
+                        self.videoHeight = _codec_context->height;
+                    }
+                    else
+                    {
+                        _codec_context->width = self.videoWidth;
+                        _codec_context->height = self.videoHeight;
+                    }
                     
                     self.needConvertByteStream = YES;
                     ff_isom_write_avcc(pb, extradata, extrasize);
@@ -131,29 +143,9 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
                     
                     extradata_size = avio_close_dyn_buf(pb, &extradata);
                     
-                    //                for (int i = 0; i < extradata_size; i++) {
-                    //                    NSLog(@"extradata[%d]:%d",i,extradata[i]);
-                    //                }
-                    
-                    //                if (!validate_avcC_spc(extradata, extrasize, &fmt_desc->max_ref_frames, &sps_level, &sps_profile)) {
-                    //                    av_free(extradata);
-                    //                    goto fail;
-                    //                }
-                    
-                    
-                    
-                    
+
                     self->_format_description = CreateFormatDescription(kCMVideoCodecType_H264, _codec_context->width, _codec_context->height, extradata, extradata_size);
                     
-                    //                CMFormatDescriptionRef _format_description;
-                    //                const uint8_t* parameterSetPointers[2] = {mSPS, mPPS};
-                    //                const size_t parameterSetSizes[2] = {mSPSSize, mPPSSize};
-                    //                OSStatus status1 = CMVideoFormatDescriptionCreateFromH264ParameterSets(kCFAllocatorDefault,
-                    //                                                                    2, //param count
-                    //                                                                    parameterSetPointers,
-                    //                                                                    parameterSetSizes,
-                    //                                                                    4, //nal start code size
-                    //                                                                    &self->_format_description);
                     
                     if (self->_format_description == NULL) {
                         error = [NSError errorWithDomain:@"create format description error" code:SGFFVideoToolBoxErrorCodeCreateFormatDescription userInfo:nil];
@@ -225,6 +217,39 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
 
 - (BOOL)sendPacket:(AVPacket)packet needFlush:(BOOL *)needFlush
 {
+    uint8_t *extradata = packet.data;
+    
+    if ((extradata[0] == 0 && extradata[1] == 0 && extradata[2] == 0 && extradata[3] == 1) ||
+        (extradata[0] == 0 && extradata[1] == 0 && extradata[2] == 1)) {
+        
+        if (packet.size > 100) {
+            int extradata_size = 0;
+            int ret = ff_find_extradata(packet.data,100,&extradata_size);
+            if (ret != AVERROR_INVALIDDATA) {
+                if (extradata_size != _codec_context->extradata_size || memcmp(extradata, _codec_context->extradata, extradata_size)) {
+                    
+                    if (self.videoHeight == 960) {
+                        self.videoHeight = 1080;
+                    }
+                    else
+                    {
+                        self.videoHeight = 960;
+                    }
+                    
+                    if (extradata_size > 0) {
+                        av_realloc(_codec_context->extradata, extradata_size);
+                        memcpy(_codec_context->extradata, extradata, extradata_size);
+                        _codec_context->extradata_size = extradata_size;
+                    }
+                    
+                    [self cleanVTSession];
+                    return NO;
+                }
+            }
+        }
+    }
+
+    
     BOOL setupResult = [self trySetupVTSession];
     if (!setupResult) return NO;
     [self cleanDecodeInfo];
@@ -516,6 +541,7 @@ int ff_isom_write_avcc(AVIOContext *pb, const uint8_t *data, int len)
                 if (nal_type == 7) { /* SPS */
                     sps = buf;
                     sps_size = size;
+                    
                 } else if (nal_type == 8) { /* PPS */
                     pps = buf;
                     pps_size = size;
@@ -545,6 +571,60 @@ int ff_isom_write_avcc(AVIOContext *pb, const uint8_t *data, int len)
         }
     }
     return 0;
+}
+
+int ff_find_extradata(const uint8_t *data, int dataLen, int* extradata_size)
+{
+    int ret_find_extradata = 1;
+    if (dataLen > 6) {
+        /* check for H.264 start code */
+        if (AV_RB32(data) == 0x00000001 ||
+            AV_RB24(data) == 0x000001) {
+            uint8_t *buf=NULL, *end, *start;
+            uint32_t sps_size=0, pps_size=0;
+            uint8_t *sps=0, *pps=0;
+            
+            int ret = ff_avc_parse_nal_units_buf(data, &buf, &dataLen);
+            if (ret < 0)
+                return ret;
+            start = buf;
+            end = buf + dataLen;
+            
+            /* look for sps and pps */
+            while (end - buf > 4) {
+                uint32_t size;
+                uint8_t nal_type;
+                size = FFMIN(AV_RB32(buf), end - buf - 4);
+                buf += 4;
+                nal_type = buf[0] & 0x1f;
+
+                if (nal_type == 7) { /* SPS */
+                    sps = buf;
+                    sps_size = size;
+                    
+                    *extradata_size += 4;
+                    *extradata_size += sps_size;
+
+                } else if (nal_type == 8) { /* PPS */
+                    pps = buf;
+                    pps_size = size;
+                    
+                    *extradata_size += 4;
+                    *extradata_size += pps_size;
+                }
+                
+                buf += size;
+            }
+            
+            av_free(start);
+            if (!sps || !pps || sps_size < 4 || sps_size > UINT16_MAX || pps_size > UINT16_MAX)
+                return AVERROR_INVALIDDATA;
+            
+        } else {
+            return AVERROR_INVALIDDATA;
+        }
+    }
+    return ret_find_extradata;
 }
 
 int ff_avc_write_annexb_extradata(const uint8_t *in, uint8_t **buf, int *size)
@@ -594,6 +674,4 @@ const uint8_t *ff_avc_mp4_find_startcode(const uint8_t *start,
     
     return start + res;
 }
-
-
 @end
