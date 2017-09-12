@@ -7,8 +7,8 @@
 //
 
 #import "PlayerViewController.h"
+#import "SecondViewController.h"
 #import <SGPlayer/SGPlayer.h>
-
 @interface PlayerViewController ()
 
 @property (nonatomic, strong) SGPlayer * player;
@@ -19,7 +19,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *totalTimeLabel;
 
 @property (nonatomic, assign) BOOL progressSilderTouching;
-
 @end
 
 @implementation PlayerViewController
@@ -28,7 +27,6 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor blackColor];
-    
     self.player = [SGPlayer player];
     [self.player registerPlayerNotificationTarget:self
                                       stateAction:@selector(stateAction:)
@@ -39,27 +37,45 @@
         NSLog(@"player display view did click!");
     }];
     [self.view insertSubview:self.player.view atIndex:0];
-    
-
-    
-
-    
-    NSString * path = @"rtsp://192.168.1.194/preview";
+    NSString * path = @"rtsp://192.168.1.215/preview";
 //    path = @"rtmp://live.hkstv.hk.lxdns.com/live/hks";
-//    path = @"ftp://ftp:PanoduxJoys@192.168.1.194/.thumb/video/VID_20170818_74.MP4";
+//    path = @"ftp://ftp:PanoduxJoys@192.168.1.194/.thumb/video/VID_20170829090419_19_3840x2160_833.JPG";
+//    path = @"ftp://ftp:PanoduxJoys@192.168.1.194/.thumb/video/VID_20170907100849_50.MP4";
 //    path = @"http://flv2.bn.netease.com/videolib3/1505/07/diNcD9285/HD/diNcD9285-mobile.mp4";
+//    path = @"ftp://ftp:PanoduxJoys@192.168.1.194/video/VID_20170907100849_50.MP4";
     NSURL* vrVideo = [NSURL URLWithString:path];
     self.player.decoder = [SGPlayerDecoder decoderByFFmpeg];
     self.player.decoder.hardwareAccelerateEnableForFFmpeg = YES;
-    self.player.decoder.optimizedDelayForFFmpeg = YES;
-    self.player.decoder.optimizedmaxFrameQueueDuration = 0.2f;
+//    self.player.decoder.optimizedDelayForFFmpeg = YES;
+//    self.player.decoder.optimizedmaxFrameQueueDuration = 0.2f;
+
+//    UIImage *image = [UIImage imageNamed:@"PIC_20170809_311.jpg"];
+//    [self.player replaceImage:image videoType:SGVideoTypeNormal];
     [self.player replaceVideoWithURL:vrVideo videoType:SGVideoTypeNormal];
+    
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(9.f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        self.player.forceDiscardDraw = YES;
+//    });
 }
 
 - (void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
     self.player.view.frame = self.view.bounds;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    self.player.forceDiscardDraw = NO;
+    [super viewWillAppear:animated];
+    
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    self.player.forceDiscardDraw = YES;
+    [super viewWillDisappear:animated];
+    
 }
 
 + (NSString *)displayNameForDemoType:(DemoType)demoType
@@ -107,6 +123,44 @@
     self.progressSilderTouching = NO;
     [self.player seekToTime:self.player.duration * self.progressSilder.value];
 }
+
+- (IBAction)action_push:(id)sender {
+    SecondViewController * obj = [[SecondViewController alloc] init];
+
+//    [self presentViewController:obj animated:YES completion:nil];
+    [self.navigationController pushViewController:obj animated:YES];
+}
+
+- (IBAction)action_Normal:(id)sender {
+    if (self.player.videoType != SGVideoTypeNormal) {
+        [self.player setValue:@(SGVideoTypeNormal) forKey:@"videoType"];
+    }
+    
+    if (self.player.displayMode != SGDisplayModeNormal) {
+        self.player.displayMode = SGDisplayModeNormal;
+    }
+}
+
+- (IBAction)action_Pano:(id)sender {
+    if (self.player.videoType != SGVideoTypeVR) {
+        [self.player setValue:@(SGVideoTypeVR) forKey:@"videoType"];
+    }
+    
+    if (self.player.displayMode != SGDisplayModeNormal) {
+        self.player.displayMode = SGDisplayModeNormal;
+    }
+}
+
+- (IBAction)action_VR:(id)sender {
+    if (self.player.videoType != SGVideoTypeVR) {
+        [self.player setValue:@(SGVideoTypeVR) forKey:@"videoType"];
+    }
+    
+    if (self.player.displayMode != SGDisplayModeBox) {
+        self.player.displayMode = SGDisplayModeBox;
+    }
+}
+
 
 - (void)stateAction:(NSNotification *)notification
 {

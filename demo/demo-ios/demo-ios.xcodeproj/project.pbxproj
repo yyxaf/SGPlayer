@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		039418C71F5EA4D00020C182 /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 039418C51F5EA4D00020C182 /* SecondViewController.m */; };
+		039418C81F5EA4D00020C182 /* SecondViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 039418C61F5EA4D00020C182 /* SecondViewController.xib */; };
+		03D864351F590A7700054FBB /* 123.png in Resources */ = {isa = PBXBuildFile; fileRef = 03D864341F590A7700054FBB /* 123.png */; };
+		03D864371F590EBA00054FBB /* Snip20170901_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 03D864361F590EBA00054FBB /* Snip20170901_1.png */; };
+		03DC1A111F59001B00EA30D9 /* PIC_20170809_311.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 03DC1A101F59001B00EA30D9 /* PIC_20170809_311.jpg */; };
 		9C02F6511E79293A00932489 /* PlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9C02F64F1E79293A00932489 /* PlayerViewController.m */; };
 		9C02F6521E79293A00932489 /* PlayerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9C02F6501E79293A00932489 /* PlayerViewController.xib */; };
 		9C36DD461E79538500959FDA /* google-help-vr.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 9C36DD441E79538500959FDA /* google-help-vr.mp4 */; };
@@ -28,6 +33,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		039418C41F5EA4D00020C182 /* SecondViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
+		039418C51F5EA4D00020C182 /* SecondViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
+		039418C61F5EA4D00020C182 /* SecondViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SecondViewController.xib; sourceTree = "<group>"; };
+		03D864341F590A7700054FBB /* 123.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 123.png; sourceTree = "<group>"; };
+		03D864361F590EBA00054FBB /* Snip20170901_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Snip20170901_1.png; sourceTree = "<group>"; };
+		03DC1A101F59001B00EA30D9 /* PIC_20170809_311.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = PIC_20170809_311.jpg; sourceTree = "<group>"; };
 		9C02F64E1E79293A00932489 /* PlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerViewController.h; sourceTree = "<group>"; };
 		9C02F64F1E79293A00932489 /* PlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerViewController.m; sourceTree = "<group>"; };
 		9C02F6501E79293A00932489 /* PlayerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PlayerViewController.xib; sourceTree = "<group>"; };
@@ -95,6 +106,9 @@
 		9C886B951E78EC9F00F2CFD1 /* demo-ios */ = {
 			isa = PBXGroup;
 			children = (
+				03D864361F590EBA00054FBB /* Snip20170901_1.png */,
+				03D864341F590A7700054FBB /* 123.png */,
+				03DC1A101F59001B00EA30D9 /* PIC_20170809_311.jpg */,
 				9C886B991E78EC9F00F2CFD1 /* AppDelegate.h */,
 				9C886B9A1E78EC9F00F2CFD1 /* AppDelegate.m */,
 				9C886B9C1E78EC9F00F2CFD1 /* ViewController.h */,
@@ -102,6 +116,9 @@
 				9C02F64E1E79293A00932489 /* PlayerViewController.h */,
 				9C02F64F1E79293A00932489 /* PlayerViewController.m */,
 				9C02F6501E79293A00932489 /* PlayerViewController.xib */,
+				039418C41F5EA4D00020C182 /* SecondViewController.h */,
+				039418C51F5EA4D00020C182 /* SecondViewController.m */,
+				039418C61F5EA4D00020C182 /* SecondViewController.xib */,
 				9C886B9F1E78EC9F00F2CFD1 /* Main.storyboard */,
 				9C886BA21E78EC9F00F2CFD1 /* Assets.xcassets */,
 				9C886BA41E78EC9F00F2CFD1 /* LaunchScreen.storyboard */,
@@ -203,12 +220,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03D864351F590A7700054FBB /* 123.png in Resources */,
 				9C886BA61E78EC9F00F2CFD1 /* LaunchScreen.storyboard in Resources */,
 				9C886BA31E78EC9F00F2CFD1 /* Assets.xcassets in Resources */,
+				03DC1A111F59001B00EA30D9 /* PIC_20170809_311.jpg in Resources */,
 				9C36DD461E79538500959FDA /* google-help-vr.mp4 in Resources */,
 				9C886BA11E78EC9F00F2CFD1 /* Main.storyboard in Resources */,
 				9C02F6521E79293A00932489 /* PlayerViewController.xib in Resources */,
+				039418C81F5EA4D00020C182 /* SecondViewController.xib in Resources */,
 				9C36DD471E79538500959FDA /* i-see-fire.mp4 in Resources */,
+				03D864371F590EBA00054FBB /* Snip20170901_1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,6 +240,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				039418C71F5EA4D00020C182 /* SecondViewController.m in Sources */,
 				9C886B9E1E78EC9F00F2CFD1 /* ViewController.m in Sources */,
 				9C02F6511E79293A00932489 /* PlayerViewController.m in Sources */,
 				9C886B9B1E78EC9F00F2CFD1 /* AppDelegate.m in Sources */,
