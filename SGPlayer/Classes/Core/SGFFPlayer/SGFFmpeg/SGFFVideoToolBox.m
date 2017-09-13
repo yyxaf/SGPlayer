@@ -33,8 +33,6 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
 @property (nonatomic, assign) BOOL vtSessionToken;
 @property (nonatomic, assign) BOOL needConvertNALSize3To4;
 @property (nonatomic, assign) BOOL needConvertByteStream;
-@property (nonatomic, assign) int videoWidth;
-@property (nonatomic, assign) int videoHeight;
 @end
 
 
@@ -49,8 +47,6 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
 {
     if (self = [super init]) {
         self->_codec_context = codecContext;
-        self.videoWidth = 0;
-        self.videoHeight = 0;
     }
     return self;
 }
@@ -126,24 +122,27 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
                         return error;
                     }
                     
-                    if (self.videoWidth == 0)
-                    {
-                        self.videoWidth = _codec_context->width;
-                        self.videoHeight = _codec_context->height;
-                    }
-                    else
-                    {
-                        _codec_context->width = self.videoWidth;
-                        _codec_context->height = self.videoHeight;
-                    }
-                    
                     self.needConvertByteStream = YES;
+
+                    int width = 0;
+                    int height = 0;
+                    ff_get_video_resolution(extradata, extrasize, &width, &height);
+                    if (height % 10 != 0) {
+                        if ((height + 8) % 10 == 0) {
+                            height += 8;
+                        }
+                        else if ((height - 8) % 10 == 0) {
+                            height -= 8;
+                        }
+                    }
+                    _codec_context->width = width;
+                    _codec_context->height= height;
+                    
                     ff_isom_write_avcc(pb, extradata, extrasize);
                     extradata = NULL;
                     
                     extradata_size = avio_close_dyn_buf(pb, &extradata);
                     
-
                     self->_format_description = CreateFormatDescription(kCMVideoCodecType_H264, _codec_context->width, _codec_context->height, extradata, extradata_size);
                     
                     
@@ -219,37 +218,30 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
 {
     uint8_t *extradata = packet.data;
     
+    int extradata_size = 0;
     if ((extradata[0] == 0 && extradata[1] == 0 && extradata[2] == 0 && extradata[3] == 1) ||
         (extradata[0] == 0 && extradata[1] == 0 && extradata[2] == 1)) {
         
         if (packet.size > 100) {
-            int extradata_size = 0;
+            
             int ret = ff_find_extradata(packet.data,100,&extradata_size);
             if (ret != AVERROR_INVALIDDATA) {
                 if (extradata_size != _codec_context->extradata_size || memcmp(extradata, _codec_context->extradata, extradata_size)) {
-                    
-                    if (self.videoHeight == 960) {
-                        self.videoHeight = 1080;
-                    }
-                    else
-                    {
-                        self.videoHeight = 960;
-                    }
                     
                     if (extradata_size > 0) {
                         av_realloc(_codec_context->extradata, extradata_size);
                         memcpy(_codec_context->extradata, extradata, extradata_size);
                         _codec_context->extradata_size = extradata_size;
+                        
+                        [self cleanVTSession];
+                        return NO;
                     }
-                    
-                    [self cleanVTSession];
-                    return NO;
                 }
             }
         }
     }
-
     
+
     BOOL setupResult = [self trySetupVTSession];
     if (!setupResult) return NO;
     [self cleanDecodeInfo];
@@ -551,7 +543,11 @@ int ff_isom_write_avcc(AVIOContext *pb, const uint8_t *data, int len)
             }
             
             if (!sps || !pps || sps_size < 4 || sps_size > UINT16_MAX || pps_size > UINT16_MAX)
+            {
+                av_free(start);
                 return AVERROR_INVALIDDATA;
+            }
+            
             
             avio_w8(pb, 1); /* version */
             avio_w8(pb, sps[1]); /* profile */
@@ -673,5 +669,98 @@ const uint8_t *ff_avc_mp4_find_startcode(const uint8_t *start,
         return NULL;
     
     return start + res;
+}
+
+void ff_get_video_resolution(uint8_t *extradata, int extradata_size, int *width, int *height)
+{
+    uint8_t *data = extradata;
+    int len = extradata_size;
+    
+    if (len > 6) {
+        /* check for H.264 start code */
+        if (AV_RB32(data) == 0x00000001 ||
+            AV_RB24(data) == 0x000001) {
+            uint8_t *buf=NULL, *end, *start;
+            uint32_t sps_size=0, pps_size=0;
+            uint8_t *sps=0, *pps=0;
+            
+            int ret = ff_avc_parse_nal_units_buf(data, &buf, &len);
+            if (ret < 0)
+                return;
+            start = buf;
+            end = buf + len;
+            
+            /* look for sps and pps */
+            while (end - buf > 4) {
+                uint32_t size;
+                uint8_t nal_type;
+                size = FFMIN(AV_RB32(buf), end - buf - 4);
+                buf += 4;
+                nal_type = buf[0] & 0x1f;
+                
+                if (nal_type == 7) { /* SPS */
+                    sps = buf;
+                    sps_size = size;
+                    
+                } else if (nal_type == 8) { /* PPS */
+                    pps = buf;
+                    pps_size = size;
+                }
+                
+                buf += size;
+            }
+
+            if (!sps || !pps || sps_size < 4 || sps_size > UINT16_MAX || pps_size > UINT16_MAX)
+            {
+                av_free(start);
+                return;
+            }
+
+            uint8_t *bits = malloc(sps_size * 8 * sizeof(uint8_t));
+            for (int i = 0; i < sps_size; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if ((sps[i] << j) & 0x80)
+                    {
+                        bits[i * 8 + j] = 1;
+                    }
+                    else
+                    {
+                        bits[i * 8 + j] = 0;
+                    }
+                }
+            }
+
+            int sps_index = 0;
+            int loopIndex = 0;
+            while (sps_index <= sps_size * 8) {
+                loopIndex++;
+                int leadingZeroBits = -1;
+                for (int b = 0; !b; leadingZeroBits++)
+                {
+                    b = bits[sps_index++];
+                }
+                
+                int value = 0;
+                for (int leadingZeroBitsIndex = 0; leadingZeroBitsIndex < leadingZeroBits; leadingZeroBitsIndex++) {
+                    int temp = bits[sps_index++];
+                    value = value << 1;
+                    value += temp;
+                }
+                
+                int codeNum = pow(2,leadingZeroBits) - 1 + value;
+                
+                if (loopIndex == 11) {
+                    *width = (codeNum + 1) * 16;
+                }
+                if (loopIndex == 12) {
+                    *height = (codeNum + 1) *16;
+                }
+            }
+            free(bits);
+            av_free(start);
+        }
+    }
 }
 @end

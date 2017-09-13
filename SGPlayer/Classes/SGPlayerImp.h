@@ -102,6 +102,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)seekToTime:(NSTimeInterval)time;
 - (void)seekToTime:(NSTimeInterval)time completeHandler:(nullable void(^)(BOOL finished))completeHandler;
 
+
+- (CGSize)videoResolutionRatio;
 @end
 
 

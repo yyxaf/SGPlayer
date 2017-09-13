@@ -174,6 +174,11 @@
     }
 }
 
+- (CGSize)videoResolutionRatio
+{
+    return [self.ffPlayer videoResolutionRatio];
+}
+
 - (void)setContentURL:(NSURL *)contentURL
 {
     _contentURL = [contentURL copy];
@@ -233,6 +238,8 @@
             return SGPlayerStateNone;
     }
 }
+
+
 
 - (CGSize)presentationSize
 {

@@ -127,5 +127,5 @@
 @property (nonatomic, strong, readonly) NSArray <SGFFTrack *> * audioTracks;
 
 - (void)selectAudioTrackIndex:(int)audioTrackIndex;
-
+- (CGSize)videoResolutionRatio;
 @end

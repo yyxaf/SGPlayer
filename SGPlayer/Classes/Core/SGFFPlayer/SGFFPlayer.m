@@ -492,6 +492,11 @@
     [self.decoder selectAudioTrackIndex:audioTrackIndex];
 }
 
+- (CGSize)videoResolutionRatio
+{
+    return [self.decoder videoResolutionRatio];
+}
+
 - (SGPlayerTrack *)playerTrackFromFFTrack:(SGFFTrack *)track
 {
     if (track) {

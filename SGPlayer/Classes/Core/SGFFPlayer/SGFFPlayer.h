@@ -62,5 +62,5 @@
 @property (nonatomic, strong, readonly) NSArray <SGPlayerTrack *> * audioTracks;
 
 - (void)selectAudioTrackIndex:(int)audioTrackIndex;
-
+- (CGSize)videoResolutionRatio;
 @end

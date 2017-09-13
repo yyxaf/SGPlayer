@@ -735,4 +735,13 @@ static NSTimeInterval max_packet_sleep_full_and_pause_time_interval = 0.5;
     }
 }
 
+- (CGSize)videoResolutionRatio
+{
+    if (self.formatContext && self.formatContext->_video_codec_context) {
+        return CGSizeMake(self.formatContext->_video_codec_context->width, self.formatContext->_video_codec_context->height);
+    }
+    
+    return CGSizeZero;
+}
+
 @end
