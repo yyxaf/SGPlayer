@@ -303,7 +303,8 @@ static int ffmpeg_interrupt_callback(void *ctx)
 - (void)seekFileWithFFTimebase:(NSTimeInterval)time
 {
     int64_t ts = time * AV_TIME_BASE;
-    av_seek_frame(self->_format_context, -1, ts, AVSEEK_FLAG_BACKWARD);
+    avformat_seek_file(self->_format_context, -1 ,INT64_MIN, ts, INT64_MAX, 0);
+    //    av_seek_frame(self->_format_context, -1, ts, AVSEEK_FLAG_BACKWARD);
 }
 
 - (void)seekFileWithVideo:(NSTimeInterval)time
