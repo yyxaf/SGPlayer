@@ -27,6 +27,7 @@ SGPLAYER_EXTERN NSString * const SGPlayerErrorNotificationName;             // p
 SGPLAYER_EXTERN NSString * const SGPlayerStateChangeNotificationName;       // player state change
 SGPLAYER_EXTERN NSString * const SGPlayerProgressChangeNotificationName;    // player play progress change
 SGPLAYER_EXTERN NSString * const SGPlayerPlayableChangeNotificationName;    // player playable progress change
+SGPLAYER_EXTERN NSString * const SGPlayerVideoResolutionChangeNotificationName;    // player playable progress change
 
 // notification userinfo key
 SGPLAYER_EXTERN NSString * const SGPlayerErrorKey;              // error
@@ -42,6 +43,8 @@ SGPLAYER_EXTERN NSString * const SGPlayerPlayablePercentKey;    // playable
 SGPLAYER_EXTERN NSString * const SGPlayerPlayableCurrentKey;    // playable
 SGPLAYER_EXTERN NSString * const SGPlayerPlayableTotalKey;      // playable
 
+SGPLAYER_EXTERN NSString * const SGPlayerVideoResolutionWidthChangeKey;      // videoResolution
+SGPLAYER_EXTERN NSString * const SGPlayerVideoResolutionHeightChangeKey;      // videoResolution
 
 #pragma mark - SGPlayer Action Category
 
@@ -56,6 +59,7 @@ SGPLAYER_EXTERN NSString * const SGPlayerPlayableTotalKey;      // playable
                              stateAction:(nullable SEL)stateAction
                           progressAction:(nullable SEL)progressAction
                           playableAction:(nullable SEL)playableAction
+                   videoResolutionAction:(nullable SEL)videoResolutionAction
                              errorAction:(nullable SEL)errorAction;
 
 - (void)removePlayerNotificationTarget:(id)target;

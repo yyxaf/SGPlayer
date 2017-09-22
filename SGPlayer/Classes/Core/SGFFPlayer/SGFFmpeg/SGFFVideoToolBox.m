@@ -8,6 +8,7 @@
 
 #import <SGPlatform/SGPlatform.h>
 #import "SGFFVideoToolBox.h"
+#import "SGPlayerNotification.h"
 #import <libavutil/intreadwrite.h>
 
 typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
@@ -82,6 +83,8 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
                 extradata[4] = 0xFF;
                 self.needConvertNALSize3To4 = YES;
             }
+            
+
             self->_format_description = CreateFormatDescription(kCMVideoCodecType_H264, _codec_context->width, _codec_context->height, extradata, extradata_size);
             if (self->_format_description == NULL) {
                 error = [NSError errorWithDomain:@"create format description error" code:SGFFVideoToolBoxErrorCodeCreateFormatDescription userInfo:nil];
@@ -92,6 +95,7 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
             cf_dict_set_int32(destinationPixelBufferAttributes, kCVPixelBufferPixelFormatTypeKey, kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
             cf_dict_set_int32(destinationPixelBufferAttributes, kCVPixelBufferWidthKey, _codec_context->width);
             cf_dict_set_int32(destinationPixelBufferAttributes, kCVPixelBufferHeightKey, _codec_context->height);
+            cf_dict_set_boolean(destinationPixelBufferAttributes, kCVPixelBufferOpenGLCompatibilityKey, YES);
 
 #if SGPLATFORM_TARGET_OS_MAC
 //            cf_dict_set_boolean(destinationPixelBufferAttributes, kCVPixelBufferOpenGLCompatibilityKey, YES);
@@ -114,6 +118,12 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
             return nil;
         } else {
             {
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
+                    self->_codec_context->width = 0;
+                    self->_codec_context->height = 0;
+                });
+                
                 if ((extradata[0] == 0 && extradata[1] == 0 && extradata[2] == 0 && extradata[3] == 1) ||
                     (extradata[0] == 0 && extradata[1] == 0 && extradata[2] == 1)) {
                     AVIOContext *pb;
@@ -135,8 +145,22 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
                             height -= 8;
                         }
                     }
-                    _codec_context->width = width;
-                    _codec_context->height= height;
+                    
+                    
+                    if (_codec_context->width != width || _codec_context->height != height) {
+                        _codec_context->width = width;
+                        _codec_context->height= height;
+                        
+                        NSDictionary * userInfo = @{
+                                                    SGPlayerVideoResolutionWidthChangeKey : [NSNumber numberWithInteger:width] ,
+                                                    SGPlayerVideoResolutionHeightChangeKey : [NSNumber numberWithInteger:height],
+                                                    };
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [[NSNotificationCenter defaultCenter] postNotificationName:SGPlayerVideoResolutionChangeNotificationName object:nil userInfo:userInfo];
+                        });
+                    }
+
                     
                     ff_isom_write_avcc(pb, extradata, extrasize);
                     extradata = NULL;
@@ -716,7 +740,8 @@ void ff_get_video_resolution(uint8_t *extradata, int extradata_size, int *width,
                 return;
             }
 
-            uint8_t *bits = malloc(sps_size * 8 * sizeof(uint8_t));
+            int bitsCount = sps_size * 8 * sizeof(uint8_t);
+            uint8_t *bits = malloc(bitsCount);
             for (int i = 0; i < sps_size; i++)
             {
                 for (int j = 0; j < 8; j++)
@@ -732,19 +757,20 @@ void ff_get_video_resolution(uint8_t *extradata, int extradata_size, int *width,
                 }
             }
 
-            int sps_index = 0;
+            int sps_bits_index = 0;
             int loopIndex = 0;
-            while (sps_index <= sps_size * 8) {
+            while (sps_bits_index <= bitsCount) {
                 loopIndex++;
                 int leadingZeroBits = -1;
-                for (int b = 0; !b; leadingZeroBits++)
+                for (int b = 0; !b && leadingZeroBits < bitsCount - sps_bits_index; leadingZeroBits++)
                 {
-                    b = bits[sps_index++];
+                    b = bits[sps_bits_index++];
                 }
+                
                 
                 int value = 0;
                 for (int leadingZeroBitsIndex = 0; leadingZeroBitsIndex < leadingZeroBits; leadingZeroBitsIndex++) {
-                    int temp = bits[sps_index++];
+                    int temp = bits[sps_bits_index++];
                     value = value << 1;
                     value += temp;
                 }

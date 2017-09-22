@@ -14,6 +14,8 @@ NSString * const SGPlayerStateChangeNotificationName = @"SGPlayerStateChangeNoti
 NSString * const SGPlayerProgressChangeNotificationName = @"SGPlayerProgressChangeNotificationName";  // player play progress change
 NSString * const SGPlayerPlayableChangeNotificationName = @"SGPlayerPlayableChangeNotificationName";   // player playable progress change
 
+NSString * const SGPlayerVideoResolutionChangeNotificationName = @"SGPlayerVideoResolutionChangeNotificationName";   //
+
 // notification userinfo key
 NSString * const SGPlayerErrorKey = @"error";               // error
 
@@ -28,6 +30,8 @@ NSString * const SGPlayerPlayablePercentKey = @"percent";   // playable
 NSString * const SGPlayerPlayableCurrentKey = @"current";   // playable
 NSString * const SGPlayerPlayableTotalKey = @"total";       // playable
 
+NSString * const SGPlayerVideoResolutionWidthChangeKey = @"videowidth";      // videoResolution
+NSString * const SGPlayerVideoResolutionHeightChangeKey = @"videoheight";      // videoResolution
 
 #pragma mark - SGPlayer Action Category
 
@@ -42,6 +46,7 @@ NSString * const SGPlayerPlayableTotalKey = @"total";       // playable
                                stateAction:stateAction
                             progressAction:progressAction
                             playableAction:playableAction
+                     videoResolutionAction:nil
                                errorAction:nil];
 }
 
@@ -49,6 +54,7 @@ NSString * const SGPlayerPlayableTotalKey = @"total";       // playable
                              stateAction:(nullable SEL)stateAction
                           progressAction:(nullable SEL)progressAction
                           playableAction:(nullable SEL)playableAction
+                   videoResolutionAction:(nullable SEL)videoResolutionAction
                              errorAction:(nullable SEL)errorAction
 {
     if (!target) return;
@@ -63,6 +69,11 @@ NSString * const SGPlayerPlayableTotalKey = @"total";       // playable
     if (playableAction) {
         [[NSNotificationCenter defaultCenter] addObserver:target selector:playableAction name:SGPlayerPlayableChangeNotificationName object:self];
     }
+    
+    if (videoResolutionAction) {
+        [[NSNotificationCenter defaultCenter] addObserver:target selector:videoResolutionAction name:SGPlayerVideoResolutionChangeNotificationName object:nil];
+    }
+    
     if (errorAction) {
         [[NSNotificationCenter defaultCenter] addObserver:target selector:errorAction name:SGPlayerErrorNotificationName object:self];
     }
@@ -73,6 +84,7 @@ NSString * const SGPlayerPlayableTotalKey = @"total";       // playable
     [[NSNotificationCenter defaultCenter] removeObserver:target name:SGPlayerStateChangeNotificationName object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:target name:SGPlayerProgressChangeNotificationName object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:target name:SGPlayerPlayableChangeNotificationName object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:target name:SGPlayerVideoResolutionChangeNotificationName object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:target name:SGPlayerErrorNotificationName object:self];
 }
 

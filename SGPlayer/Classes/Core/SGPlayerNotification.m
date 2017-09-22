@@ -58,6 +58,17 @@
     [self postNotificationName:SGPlayerPlayableChangeNotificationName object:player userInfo:userInfo];
 }
 
+
++ (void)postPlayer:(SGPlayer *)player videoResolutionChange:(CGSize)size
+{
+    if (!player) return;
+    NSDictionary * userInfo = @{
+                                SGPlayerVideoResolutionWidthChangeKey : [NSNumber numberWithInteger:size.width] ,
+                                SGPlayerVideoResolutionHeightChangeKey : [NSNumber numberWithInteger:size.height],
+                                };
+    [self postNotificationName:SGPlayerVideoResolutionChangeNotificationName object:player userInfo:userInfo];
+}
+
 + (void)postNotificationName:(NSString *)name object:(id)object userInfo:(NSDictionary *)userInfo
 {
     dispatch_async(dispatch_get_main_queue(), ^{
