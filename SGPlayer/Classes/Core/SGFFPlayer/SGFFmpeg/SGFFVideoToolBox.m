@@ -34,6 +34,7 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
 @property (nonatomic, assign) BOOL vtSessionToken;
 @property (nonatomic, assign) BOOL needConvertNALSize3To4;
 @property (nonatomic, assign) BOOL needConvertByteStream;
+@property (nonatomic, assign) BOOL fristGetVideoSize;
 @end
 
 
@@ -48,6 +49,7 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
 {
     if (self = [super init]) {
         self->_codec_context = codecContext;
+        self.fristGetVideoSize = YES;
     }
     return self;
 }
@@ -83,7 +85,6 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
                 extradata[4] = 0xFF;
                 self.needConvertNALSize3To4 = YES;
             }
-            
 
             self->_format_description = CreateFormatDescription(kCMVideoCodecType_H264, _codec_context->width, _codec_context->height, extradata, extradata_size);
             if (self->_format_description == NULL) {
@@ -118,12 +119,6 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
             return nil;
         } else {
             {
-                static dispatch_once_t onceToken;
-                dispatch_once(&onceToken, ^{
-                    self->_codec_context->width = 0;
-                    self->_codec_context->height = 0;
-                });
-                
                 if ((extradata[0] == 0 && extradata[1] == 0 && extradata[2] == 0 && extradata[3] == 1) ||
                     (extradata[0] == 0 && extradata[1] == 0 && extradata[2] == 1)) {
                     AVIOContext *pb;
@@ -147,7 +142,8 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
                     }
                     
                     
-                    if (_codec_context->width != width || _codec_context->height != height) {
+                    if (_codec_context->width != width || _codec_context->height != height || self.fristGetVideoSize) {
+                        self.fristGetVideoSize = NO;
                         _codec_context->width = width;
                         _codec_context->height= height;
                         
@@ -159,6 +155,7 @@ typedef NS_ENUM(NSUInteger, SGFFVideoToolBoxErrorCode) {
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [[NSNotificationCenter defaultCenter] postNotificationName:SGPlayerVideoResolutionChangeNotificationName object:nil userInfo:userInfo];
                         });
+                        NSLog(@"SGPlayerVideoResolutionChange 0x00000001");
                     }
 
                     
