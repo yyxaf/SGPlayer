@@ -415,20 +415,38 @@
 
 - (void)setFPS
 {
+    
+    NSString* phoneVersion = [[UIDevice currentDevice] systemVersion];
+    
     SGVideoType videoType = self.displayView.abstractPlayer.videoType;
     switch (videoType) {
         case SGVideoTypeNormal:
         {
-            if (self.displayLink.preferredFramesPerSecond != 30.f) {
-                self.displayLink.preferredFramesPerSecond = 30.f;
+            
+            if (phoneVersion.doubleValue > 10.f) {
+                if (self.displayLink.preferredFramesPerSecond != 30.f) {
+                    self.displayLink.preferredFramesPerSecond = 30.f;
+                }
+            }
+            else {
+                if (self.displayLink.frameInterval != 30.f) {
+                    self.displayLink.frameInterval = 30.f;
+                }
             }
         }
             
             break;
         case SGVideoTypeVR:
         {
-            if (self.displayLink.preferredFramesPerSecond != 60.f) {
-                self.displayLink.preferredFramesPerSecond = 60.f;
+            if (phoneVersion.doubleValue > 10.f) {
+                if (self.displayLink.preferredFramesPerSecond != 60.f) {
+                    self.displayLink.preferredFramesPerSecond = 60.f;
+                }
+            }
+            else {
+                if (self.displayLink.frameInterval != 60.f) {
+                    self.displayLink.frameInterval = 60.f;
+                }
             }
         }
             
